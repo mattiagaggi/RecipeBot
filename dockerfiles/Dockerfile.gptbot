@@ -1,0 +1,22 @@
+# Use Python 3.11 slim image as base
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first
+COPY requirements-gptbot.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements-gptbot.txt
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
+# Copy the source code
+COPY gptbot/app/ ./app/
+COPY gptbot/interactive_chat.py .
+# Expose port 8000 (FastAPI server)
+EXPOSE 8000
+
+# By default, run uvicorn in the foreground
