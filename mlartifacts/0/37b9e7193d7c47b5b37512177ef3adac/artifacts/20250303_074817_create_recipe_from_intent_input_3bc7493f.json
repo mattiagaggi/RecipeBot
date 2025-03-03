@@ -1,4 +1,0 @@
-{
-  "intent": "create a recipe for pasta carbonara",
-  "prompt_template": "\nGiven the following intent, create a recipe in JSON format.\n\nThe recipe must match closely anything specified in the intent, the ingredients and steps must be as close as possible to the intent, the quantities must be standard quantities.\nReview the recipe and make sure it is correct. Clearly define the quantities and for how many people the recipe is for, infer the number of people from the quantities if not specified.\nIf the intent is not clear, ask remember to guess what the user wants and output the recipe with all the information required.\n\nIntent: {intent}\nReturn your answer in the following JSON format:\n{json_schema}\n\n"
-}
