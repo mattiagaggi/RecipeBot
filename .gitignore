@@ -1,0 +1,33 @@
+# Fix the .pyc pattern and add more Python-specific excludes
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+env/
+venv/
+ENV/
+.env/
+
+env/
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+
+.env
