@@ -15,8 +15,6 @@ venv/
 ENV/
 .env/
 
-env/
-
 # IDE settings
 .vscode/
 .idea/
@@ -29,5 +27,3 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
-
-.env
