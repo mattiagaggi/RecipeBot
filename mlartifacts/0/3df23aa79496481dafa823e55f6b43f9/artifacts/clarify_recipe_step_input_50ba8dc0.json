@@ -1,0 +1,39 @@
+{
+  "recipe": {
+    "ingredients": [
+      "all-purpose flour",
+      "instant yeast",
+      "salt",
+      "sugar",
+      "warm water"
+    ],
+    "quantities": [
+      4,
+      2.25,
+      1.5,
+      1,
+      1.5
+    ],
+    "units": [
+      "cups",
+      "teaspoons",
+      "teaspoons",
+      "tablespoon",
+      "cups"
+    ],
+    "steps": [
+      "In a large mixing bowl, combine the flour, yeast, salt, and sugar. Stir to combine.",
+      "Slowly add the warm water to the dry ingredients. Mix until a shaggy dough forms.",
+      "Turn the dough onto a floured surface and knead for about 8-10 minutes until smooth and elastic.",
+      "Place the dough in a greased bowl, cover it with a damp cloth, and let it rise in a warm place until it doubles in size, about 1-2 hours.",
+      "Punch down the risen dough and turn it onto a floured surface. Shape it into a loaf.",
+      "Place the shaped loaf into a greased loaf pan. Cover and let it rise for another 30-60 minutes, until it puffs up.",
+      "Preheat your oven to 375\u00b0F (190\u00b0C).",
+      "Bake the bread for about 25-30 minutes or until the top is golden brown and sounds hollow when tapped.",
+      "Remove from the oven and let it cool in the pan for a few minutes before transferring to a wire rack to cool completely."
+    ],
+    "number_of_people": 12
+  },
+  "clarification_request": "clarify step 2",
+  "prompt_template": "\nYou are a recipe assistant designed to clarify a particular recipe. Given the recipe below, do the following:\n1. Review the recipe and identify any steps that might need more explanation.\n2. Provide clear guidance for each step that requires extra details.\n3. Double check your clarification is correct and does not change the original recipe.\n\nRecipe: {recipe}\nUser\u2019s clarification request: {user_clarification_request}\n\n"
+}

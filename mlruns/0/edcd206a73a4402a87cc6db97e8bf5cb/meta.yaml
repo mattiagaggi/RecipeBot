@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/edcd206a73a4402a87cc6db97e8bf5cb/artifacts
+end_time: 1740985710049
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: edcd206a73a4402a87cc6db97e8bf5cb
+run_name: amazing-doe-786
+run_uuid: edcd206a73a4402a87cc6db97e8bf5cb
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1740985631388
+status: 3
+tags: []
+user_id: Mattia

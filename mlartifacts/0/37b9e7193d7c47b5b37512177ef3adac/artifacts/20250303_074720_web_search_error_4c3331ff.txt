@@ -1,0 +1,8 @@
+Failed to parse SearchResults from completion {"properties": {"recipes": {"description": "List of recipe names and brief descriptions found through search", "items": {"type": "string"}, "title": "Recipes", "type": "array"}, "sources": {"description": "List of URLs where these recipes were found", "items": {"type": "string"}, "title": "Sources", "type": "array"}}, "required": ["recipes", "sources"], "title": "SearchResults", "type": "object", "examples": {"recipes": ["Pan Casero - Una receta sencilla de pan que utiliza harina de trigo, agua, levadura, az\u00facar, sal y mantequilla.", "Pan de Caja - Un delicioso pan que sigue pasos similares de activaci\u00f3n de levadura y amasado.", "Pan de Mantequilla - Receta enfocada en la suavidad gracias a la mantequilla y que tambi\u00e9n requiere levadura."], "sources": ["https://www.ejemplo.com/pan-casero", "https://www.ejemplo.com/pan-de-caja", "https://www.ejemplo.com/pan-de-mantequilla"]}}. Got: 2 validation errors for SearchResults
+recipes
+  Field required [type=missing, input_value={'properties': {'recipes'...m/pan-de-mantequilla']}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+sources
+  Field required [type=missing, input_value={'properties': {'recipes'...m/pan-de-mantequilla']}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 

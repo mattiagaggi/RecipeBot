@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/0/6f17b2dd1449414e99da7ba319a5f471/artifacts
+deleted_time: 1740985458066
+end_time: 1740984911069
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 6f17b2dd1449414e99da7ba319a5f471
+run_name: brawny-flea-894
+run_uuid: 6f17b2dd1449414e99da7ba319a5f471
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1740984566812
+status: 3
+tags: []
+user_id: Mattia

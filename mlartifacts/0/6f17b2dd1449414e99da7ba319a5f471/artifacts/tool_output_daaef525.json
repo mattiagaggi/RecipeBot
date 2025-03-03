@@ -1,0 +1,38 @@
+{
+  "ingredients": [
+    "All-purpose flour",
+    "Instant yeast",
+    "Salt",
+    "Sugar",
+    "Warm water",
+    "Olive oil"
+  ],
+  "quantities": [
+    4,
+    2,
+    1,
+    1,
+    1.5,
+    2
+  ],
+  "units": [
+    "cups",
+    "teaspoons",
+    "teaspoon",
+    "tablespoon",
+    "cups",
+    "tablespoons"
+  ],
+  "steps": [
+    "In a large mixing bowl, combine 4 cups of all-purpose flour, 2 teaspoons of instant yeast, 1 teaspoon of salt, and 1 tablespoon of sugar.",
+    "Gradually add 1.5 cups of warm water and 2 tablespoons of olive oil to the dry ingredients.",
+    "Mix until a rough dough forms, then knead on a floured surface for about 10 minutes until smooth and elastic.",
+    "Place the dough in a greased bowl, cover with a damp cloth, and let it rise in a warm place for about 1 hour or until doubled in size.",
+    "Preheat the oven to 375\u00b0F (190\u00b0C).",
+    "Punch down the risen dough and shape it into a loaf.",
+    "Place the loaf in a greased loaf pan and let it rise again for about 30 minutes.",
+    "Bake in the preheated oven for 25-30 minutes or until golden brown and sounds hollow when tapped.",
+    "Allow the bread to cool before slicing."
+  ],
+  "number_of_people": 12
+}

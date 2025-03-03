@@ -21,7 +21,7 @@ CLARIFY_RECIPE_STEP_GUIDANCE = (
 WEB_SEARCH_GUIDANCE = (
     "Ensure the recipe object is complete and correctly formatted. "
     "Check that all required fields are present and valid. "
-    "Consider simplifying the recipe details for better search results."
+    "Consider simplifying the recipe details for better search results. Parse also the websites for the recipes."
 )
 
 CREATE_RECIPE_FROM_INTENT_GUIDANCE = (

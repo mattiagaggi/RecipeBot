@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/b08fe0f236854a2ca2efe142ca622c0a/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: b08fe0f236854a2ca2efe142ca622c0a
+run_name: likeable-kit-576
+run_uuid: b08fe0f236854a2ca2efe142ca622c0a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1740985807767
+status: 1
+tags: []
+user_id: Mattia

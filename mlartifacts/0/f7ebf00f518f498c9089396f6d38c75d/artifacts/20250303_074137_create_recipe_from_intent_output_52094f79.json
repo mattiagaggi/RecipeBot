@@ -1,0 +1,33 @@
+{
+  "ingredients": [
+    "All-purpose flour",
+    "Water",
+    "Yeast",
+    "Salt"
+  ],
+  "quantities": [
+    1,
+    0.5,
+    0.25,
+    0.1
+  ],
+  "units": [
+    "cup",
+    "cup",
+    "teaspoon",
+    "teaspoon"
+  ],
+  "steps": [
+    "In a mixing bowl, combine 1 cup of all-purpose flour, 0.5 cup of water, 0.25 teaspoon of yeast, and 0.1 teaspoon of salt.",
+    "Mix the ingredients until a dough forms.",
+    "Knead the dough on a floured surface for about 5-7 minutes until smooth.",
+    "Shape the dough into a ball and place it in a lightly greased bowl.",
+    "Cover the bowl with a cloth and let it rise in a warm place for about 1 hour or until doubled in size.",
+    "Preheat the oven to 400\u00b0F (200\u00b0C).",
+    "Once risen, punch down the dough and shape it into a loaf.",
+    "Place the loaf on a baking sheet and let it rest for another 30 minutes.",
+    "Bake for 25-30 minutes until golden brown.",
+    "Let the bread cool on a wire rack before serving."
+  ],
+  "number_of_people": 1
+}

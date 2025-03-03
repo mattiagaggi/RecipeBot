@@ -1,0 +1,17 @@
+Failed to parse Recipe from completion {"properties": {"ingredients": {"description": "List of ingredient names.", "items": {"type": "string"}, "title": "Ingredients", "type": "array"}, "quantities": {"description": "List of quantities for each ingredient", "items": {"anyOf": [{"type": "number"}, {"type": "integer"}]}, "title": "Quantities", "type": "array"}, "units": {"description": "List of units corresponding to each quantity", "items": {"type": "string"}, "title": "Units", "type": "array"}, "steps": {"description": "Ordered list of recipe preparation steps", "items": {"type": "string"}, "title": "Steps", "type": "array"}, "number_of_people": {"description": "Number of people the recipe is for", "title": "Number Of People", "type": "integer"}}, "required": ["ingredients", "quantities", "units", "steps", "number_of_people"], "title": "Recipe", "type": "object", "example": {"ingredients": ["All-purpose flour", "Water", "Yeast", "Salt", "Sugar", "Butter"], "quantities": [500, 300, 7, 10, 15, 30], "units": ["grams", "milliliters", "grams", "grams", "grams", "grams"], "steps": ["In a large mixing bowl, combine the flour, sugar, and salt.", "In a separate bowl, dissolve the yeast in warm water and let it sit for about 5 minutes.", "Add the yeast mixture and melted butter to the flour mixture.", "Knead the dough for about 10 minutes until smooth and elastic.", "Place the dough in a greased bowl, cover with a damp cloth, and let it rise for 1 hour or until doubled in size.", "Preheat the oven to 190\u00b0C (375\u00b0F).", "Punch down the dough and shape it into a loaf.", "Place the loaf in a greased loaf pan and let it rise again for about 30 minutes.", "Bake in the preheated oven for 25-30 minutes or until golden brown.", "Cool the bread on a wire rack before slicing."], "number_of_people": 8}}. Got: 5 validation errors for Recipe
+ingredients
+  Field required [type=missing, input_value={'properties': {'ingredie... 'number_of_people': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+quantities
+  Field required [type=missing, input_value={'properties': {'ingredie... 'number_of_people': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+units
+  Field required [type=missing, input_value={'properties': {'ingredie... 'number_of_people': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+steps
+  Field required [type=missing, input_value={'properties': {'ingredie... 'number_of_people': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+number_of_people
+  Field required [type=missing, input_value={'properties': {'ingredie... 'number_of_people': 8}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+For troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/OUTPUT_PARSING_FAILURE 

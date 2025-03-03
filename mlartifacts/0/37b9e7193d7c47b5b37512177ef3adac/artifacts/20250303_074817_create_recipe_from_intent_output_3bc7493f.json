@@ -1,0 +1,40 @@
+{
+  "ingredients": [
+    "Spaghetti",
+    "Pancetta",
+    "Eggs",
+    "Parmesan cheese",
+    "Garlic",
+    "Black pepper",
+    "Salt"
+  ],
+  "quantities": [
+    400,
+    150,
+    4,
+    100,
+    2,
+    1,
+    1
+  ],
+  "units": [
+    "g",
+    "g",
+    "large",
+    "g",
+    "clove",
+    "to taste",
+    "pinch"
+  ],
+  "steps": [
+    "Cook the spaghetti in salted boiling water according to package instructions until al dente.",
+    "While the spaghetti is cooking, heat a pan over medium heat and add the pancetta.",
+    "Fry the pancetta until crispy, then add minced garlic and cook for another minute.",
+    "In a bowl, whisk together eggs, grated Parmesan cheese, and black pepper.",
+    "Once the spaghetti is cooked, reserve 1 cup of pasta water and drain the rest.",
+    "Add the hot spaghetti to the pancetta pan and mix well.",
+    "Remove the pan from heat and quickly add egg mixture, stirring continuously to create a creamy sauce. If needed, add reserved pasta water to reach desired consistency.",
+    "Serve immediately, garnished with additional Parmesan cheese and black pepper."
+  ],
+  "number_of_people": 4
+}

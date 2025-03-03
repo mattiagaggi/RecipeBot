@@ -1,0 +1,36 @@
+{
+  "ingredients": [
+    "All-purpose flour",
+    "Water",
+    "Yeast",
+    "Sugar",
+    "Salt"
+  ],
+  "quantities": [
+    500,
+    300,
+    7,
+    10,
+    10
+  ],
+  "units": [
+    "grams",
+    "milliliters",
+    "grams",
+    "grams",
+    "grams"
+  ],
+  "steps": [
+    "In a large mixing bowl, combine the flour and salt.",
+    "In a separate bowl, dissolve the yeast and sugar in warm water. Let it sit for about 5-10 minutes until frothy.",
+    "Add the yeast mixture to the flour and mix until a dough forms.",
+    "Knead the dough on a floured surface for about 10 minutes until smooth and elastic.",
+    "Place the dough in a lightly greased bowl, cover with a damp cloth, and let it rise in a warm place for about 1 hour or until doubled in size.",
+    "Preheat the oven to 220\u00b0C (430\u00b0F).",
+    "Punch down the risen dough and shape it into a loaf. Place it in a greased loaf pan.",
+    "Let the dough rise again for about 30 minutes.",
+    "Bake in the preheated oven for 25-30 minutes or until golden brown and sounds hollow when tapped.",
+    "Remove from the oven and let it cool before slicing."
+  ],
+  "number_of_people": 10
+}

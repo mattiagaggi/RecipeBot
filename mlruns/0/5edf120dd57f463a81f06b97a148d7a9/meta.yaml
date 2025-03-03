@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/0/5edf120dd57f463a81f06b97a148d7a9/artifacts
+deleted_time: 1740984531990
+end_time: 1740984387722
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 5edf120dd57f463a81f06b97a148d7a9
+run_name: redolent-fox-591
+run_uuid: 5edf120dd57f463a81f06b97a148d7a9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1740984263574
+status: 3
+tags: []
+user_id: Mattia

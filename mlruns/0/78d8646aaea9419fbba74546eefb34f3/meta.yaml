@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/0/78d8646aaea9419fbba74546eefb34f3/artifacts
+deleted_time: 1740985458066
+end_time: 1740985229625
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: deleted
+run_id: 78d8646aaea9419fbba74546eefb34f3
+run_name: exultant-eel-231
+run_uuid: 78d8646aaea9419fbba74546eefb34f3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1740984953933
+status: 3
+tags: []
+user_id: Mattia

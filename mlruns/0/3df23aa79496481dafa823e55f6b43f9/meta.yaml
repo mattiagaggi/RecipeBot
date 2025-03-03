@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/3df23aa79496481dafa823e55f6b43f9/artifacts
+end_time: 1740987682096
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3df23aa79496481dafa823e55f6b43f9
+run_name: resilient-gull-401
+run_uuid: 3df23aa79496481dafa823e55f6b43f9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1740987388599
+status: 3
+tags: []
+user_id: Mattia

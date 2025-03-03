@@ -1,0 +1,43 @@
+{
+  "recipe": {
+    "ingredients": [
+      "All-purpose flour",
+      "Water",
+      "Yeast",
+      "Sugar",
+      "Salt",
+      "Butter"
+    ],
+    "quantities": [
+      4,
+      1.5,
+      2,
+      1,
+      1,
+      2
+    ],
+    "units": [
+      "cups",
+      "cups",
+      "tablespoons",
+      "tablespoons",
+      "teaspoon",
+      "tablespoons"
+    ],
+    "steps": [
+      "In a large bowl, combine the warm water, sugar, and yeast. Let it sit for about 5-10 minutes, until frothy.",
+      "Add the melted butter and salt to the yeast mixture.",
+      "Gradually add the flour, one cup at a time, mixing with a wooden spoon until a dough forms.",
+      "Turn the dough onto a floured surface and knead for about 8-10 minutes until smooth and elastic.",
+      "Place the dough in a greased bowl, cover with a cloth, and let it rise in a warm place until doubled in size, about 1-2 hours.",
+      "Punch down the dough, shape it into a loaf, and place it in a greased loaf pan.",
+      "Cover and let it rise again until doubled, about 30-45 minutes.",
+      "Preheat the oven to 375\u00b0F (190\u00b0C).",
+      "Bake for 25-30 minutes or until golden brown and sounds hollow when tapped.",
+      "Let the bread cool in the pan for a few minutes before transferring to a wire rack."
+    ],
+    "number_of_people": 12
+  },
+  "language": "es",
+  "prompt_template": "\nYou are given a recipe in JSON format and a target language.\nYour task is to translate ONLY the text within the arrays of \"ingredients\" and \"steps.\"\nDo not modify or translate the top-level JSON keys.\n\n\nThe JSON schema is as follows (do not alter any keys):\n{json_schema}\n\nSpecific instructions:\n\u2022 Do not change the field name \"ingredients\" or \"steps.\"\n\u2022 Translate only the text inside each array of \"ingredients\" and \"steps.\"\n\nHere is the recipe to translate:\n{recipe}\n\nTarget language: {language}\n\nReturn ONLY valid JSON matching the original schema. Do not include additional explanations.\n"
+}

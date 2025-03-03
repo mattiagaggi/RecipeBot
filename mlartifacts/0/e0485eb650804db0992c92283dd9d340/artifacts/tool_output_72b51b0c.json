@@ -1,0 +1,36 @@
+{
+  "ingredients": [
+    "All-purpose flour",
+    "Water",
+    "Active dry yeast",
+    "Salt",
+    "Sugar"
+  ],
+  "quantities": [
+    4,
+    1.5,
+    1,
+    1,
+    2
+  ],
+  "units": [
+    "cups",
+    "cups",
+    "teaspoons",
+    "teaspoon",
+    "tablespoons"
+  ],
+  "steps": [
+    "In a large bowl, mix together the flour, sugar, and salt.",
+    "In a separate bowl, dissolve the yeast in warm water (around 110\u00b0F or 43\u00b0C) and let it sit for about 5 minutes until frothy.",
+    "Add the yeast mixture to the dry ingredients and mix until a dough forms.",
+    "Knead the dough on a floured surface for about 8-10 minutes until it is smooth and elastic.",
+    "Place the dough in a greased bowl, cover it with a damp cloth, and let it rise in a warm place for about 1 hour or until doubled in size.",
+    "Punch down the dough and shape it into a loaf.",
+    "Place the loaf in a greased bread pan, cover again, and let it rise for another 30-40 minutes.",
+    "Preheat the oven to 375\u00b0F (190\u00b0C).",
+    "Bake the bread for 25-30 minutes until the crust is golden brown and the bread sounds hollow when tapped.",
+    "Let the bread cool on a wire rack before slicing."
+  ],
+  "number_of_people": 8
+}

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/67d6357fdcbe4b5491d2cbcd347c4cd7/artifacts
+end_time: 1740986271149
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 67d6357fdcbe4b5491d2cbcd347c4cd7
+run_name: painted-lynx-386
+run_uuid: 67d6357fdcbe4b5491d2cbcd347c4cd7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1740985942180
+status: 3
+tags: []
+user_id: Mattia
