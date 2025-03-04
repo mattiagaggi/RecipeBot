@@ -18,31 +18,91 @@ def setup_mlflow(tracking_uri=None, experiment_id="0"):
     global active_run_id, mlflow_available
     
     # 1) Resolve the MLflow Tracking URI (priority: env var -> function arg -> default)
-    tracking_uri = os.environ.get("MLFLOW_TRACKING_URI") or tracking_uri or "http://mlflow:5002"
+    # For local development, default to a localhost URI if not specified
+    in_kubernetes = os.environ.get("KUBERNETES_SERVICE_HOST") is not None
+    default_uri = "http://localhost:5000" if not in_kubernetes else "http://mlflow:5002"
+    tracking_uri = os.environ.get("MLFLOW_TRACKING_URI") or tracking_uri or default_uri
     print(f"Setting MLflow tracking URI to: {tracking_uri}")
+    
+    # Adjust startup delay based on environment
+    if in_kubernetes and os.environ.get("MLFLOW_STARTUP_DELAY"):
+        delay = int(os.environ.get("MLFLOW_STARTUP_DELAY", "10"))
+        print(f"In Kubernetes: waiting {delay} seconds for MLflow to be ready...")
+        time.sleep(delay)
     
     try:
         # 2) Configure tracking URI once
         mlflow.set_tracking_uri(tracking_uri)
         print(f"MLflow tracking URI set to: {tracking_uri}")
         
-        # 3) Optionally pick up a file-based artifact location from env
-        #    (We no longer set MLFLOW_ARTIFACT_ROOT ourselves; let the MLflow server serve artifacts.)
-        artifact_location = os.environ.get("MLFLOW_ARTIFACT_LOCATION", "file:///tmp/mlflow/artifacts")
-        print(f"Using artifact location (local reference): {artifact_location}")
+        # 3) Set artifact location based on environment
+        if in_kubernetes:
+            artifact_location = os.environ.get("MLFLOW_ARTIFACT_LOCATION", "file://mlflow/artifacts")
+            print(f"Running in Kubernetes. Using artifact location: {artifact_location}")
+        else:
+            # When not in Kubernetes, use a local directory in the current working directory
+            artifact_location = os.environ.get("MLFLOW_ARTIFACT_LOCATION", os.path.join(os.getcwd(), "mlflow-artifacts"))
+            print(f"Not running in Kubernetes. Using local artifact location: {artifact_location}")
+            # Create the directory if it doesn't exist
+            try:
+                os.makedirs(artifact_location, exist_ok=True)
+                print(f"Created artifact directory: {artifact_location}")
+            except Exception as e:
+                print(f"Warning: Failed to create artifact directory: {str(e)}")
         
-        # 4) Quick connectivity check
-        try:
-            response = requests.get(tracking_uri, timeout=10)
-            if response.status_code == 200:
-                print(f"Successfully connected to MLflow UI at {tracking_uri}")
-                mlflow_available = True
-            else:
-                print(f"Warning: MLflow base URL returned status code {response.status_code}")
-                mlflow_available = False
-                return None
-        except Exception as e:
-            print(f"Error connecting to MLflow: {str(e)}")
+        # 4) Quick connectivity check with retries for better reliability
+        max_retries = 5  # Increased from 3
+        retry_delay = 3  # Increased from 2
+        connected = False
+        
+        for attempt in range(max_retries):
+            try:
+                print(f"Attempt {attempt+1}/{max_retries} to connect to MLflow at {tracking_uri}")
+                # First try the base URL which should return 200
+                response = requests.get(tracking_uri, timeout=10)  # Increased timeout
+                
+                if response.status_code == 200:
+                    print(f"Successfully connected to MLflow UI at {tracking_uri}")
+                    
+                    # Then try an API endpoint to verify API access
+                    try:
+                        api_url = f"{tracking_uri}/api/2.0/mlflow/experiments/list"
+                        print(f"Testing MLflow API at {api_url}")
+                        api_response = requests.get(api_url, timeout=10)
+                        
+                        # 200 means success, 400 might mean it needs parameters but API exists
+                        if api_response.status_code in [200, 400]:
+                            print(f"MLflow API is accessible (status: {api_response.status_code})")
+                            mlflow_available = True
+                            connected = True
+                            break
+                        else:
+                            print(f"Warning: MLflow API returned unexpected status: {api_response.status_code}")
+                    except Exception as api_err:
+                        print(f"Error testing MLflow API: {str(api_err)}")
+                else:
+                    print(f"Warning: MLflow base URL returned status code {response.status_code}")
+            except requests.exceptions.ConnectionError as e:
+                print(f"Connection error: {str(e)}")
+                # Try DNS lookup
+                try:
+                    import socket
+                    hostname = tracking_uri.split("//")[1].split(":")[0]
+                    print(f"Trying DNS lookup for {hostname}...")
+                    ip = socket.gethostbyname(hostname)
+                    print(f"DNS lookup for {hostname}: {ip}")
+                except Exception as dns_err:
+                    print(f"DNS lookup failed: {str(dns_err)}")
+            except Exception as e:
+                print(f"Error connecting to MLflow (attempt {attempt+1}/{max_retries}): {str(e)}")
+            
+            if attempt < max_retries - 1:
+                print(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+                retry_delay += 2  # Progressive backoff
+        
+        if not connected:
+            print("MLflow tracking will be disabled, but execution will continue.")
             mlflow_available = False
             return None
         

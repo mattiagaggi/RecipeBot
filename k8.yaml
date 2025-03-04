@@ -57,7 +57,7 @@ spec:
             - name: MLFLOW_TRACKING_URI
               value: "http://mlflow:5002"
             - name: MLFLOW_ARTIFACT_LOCATION
-              value: "file:///tmp/mlflow/artifacts"
+              value: "file:///mlflow/artifacts"
             # Optionally silence Git warnings:
             - name: GIT_PYTHON_REFRESH
               value: "quiet"
@@ -144,19 +144,20 @@ spec:
             - -c
             - |
               echo "Initializing MLflow database..."
-              mkdir -p /tmp/mlflow/artifacts
+              mkdir -p /mlflow/store
+              mkdir -p /mlflow/artifacts
               # Create the default experiment explicitly
               python -c "
               import mlflow
               from mlflow.store.tracking.file_store import FileStore
-              store = FileStore('/tmp/mlflow')
+              store = FileStore('/mlflow/store')
               if not store.get_experiment_by_name('Default'):
                   store.create_experiment('Default')
               print('Default experiment initialized')
               "
           volumeMounts:
             - name: mlflow-data
-              mountPath: /tmp/mlflow
+              mountPath: /mlflow
       containers:
         - name: mlflow
           image: mlflow:local
@@ -164,7 +165,7 @@ spec:
             - containerPort: 5002
           volumeMounts:
             - name: mlflow-data
-              mountPath: /tmp/mlflow
+              mountPath: /mlflow
           command:
             - mlflow
             - server
@@ -173,9 +174,9 @@ spec:
             - "--port"
             - "5002"
             - "--backend-store-uri"
-            - "file:///tmp/mlflow"
+            - "file:///mlflow/store"
             - "--default-artifact-root"
-            - "file:///tmp/mlflow/artifacts"
+            - "file:///mlflow/artifacts"
             - "--serve-artifacts"
           readinessProbe:
             httpGet:

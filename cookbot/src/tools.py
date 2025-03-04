@@ -38,6 +38,8 @@ def increment_tool_metric(metric_name):
         # Use safe logging
         from src.mlflow_config import log_metric_safely
         log_metric_safely(metric_name, _tool_metrics[metric_name])
+        # Add debug output for troubleshooting
+        print(f"Tool metric incremented: {metric_name} = {_tool_metrics[metric_name]}")
 
 @tool
 def adjust_recipe_quantities_tool(recipe: Recipe, adjustment: str) -> Union[Recipe, ErrorResponse]:

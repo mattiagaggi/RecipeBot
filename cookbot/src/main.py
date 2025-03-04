@@ -11,12 +11,13 @@ import time
 
 # Set up MLflow globally
 try:
-    # Add a slight delay to ensure MLflow API is fully available
-    print("Waiting 10 seconds for MLflow to be fully ready...")
-    time.sleep(30)
-    
+    # MLflow setup is now handled in the setup_mlflow function
+    # with proper environment detection and configurable delays
     run_id = setup_mlflow()
-    print(f"MLflow tracking active with run_id: {run_id}")
+    if run_id:
+        print(f"MLflow tracking active with run_id: {run_id}")
+    else:
+        print("MLflow tracking is disabled, but application will continue")
 except Exception as e:
     print(f"Warning: MLflow setup failed: {e}")
     run_id = None
