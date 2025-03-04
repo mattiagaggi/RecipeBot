@@ -85,22 +85,22 @@ def adjust_recipe_quantities_tool(recipe: Recipe, adjustment: str) -> Union[Reci
         log_text_safely(result_json, f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
-        error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_validation_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except OutputParserException as e:
-        error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_output_parser_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except TypeError as e:
-        error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_type_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except AttributeError as e:
-        error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_attribute_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
@@ -137,12 +137,12 @@ def translate_recipe_tool(recipe: Recipe, language: str) -> Union[TranslationOut
         log_text_safely(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
-        error_response = ErrorResponse(status="error", message=TRANSLATE_RECIPE_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=TRANSLATE_RECIPE_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}_{language}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}_{language}.json")
         return error_response
     except OutputParserException as e:
-        error_response = ErrorResponse(status="error", message=TRANSLATE_RECIPE_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=TRANSLATE_RECIPE_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}_{language}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}_{language}.json")
         return error_response
@@ -180,12 +180,12 @@ def clarify_recipe_step_tool(recipe: Recipe, clarification_request: str) -> Unio
         log_text_safely(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
-        error_response = ErrorResponse(status="error", message=CLARIFY_RECIPE_STEP_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=CLARIFY_RECIPE_STEP_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except OutputParserException as e:
-        error_response = ErrorResponse(status="error", message=CLARIFY_RECIPE_STEP_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=CLARIFY_RECIPE_STEP_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
@@ -224,12 +224,12 @@ def web_search_tool(recipe: Recipe) -> Union[SearchResults, ErrorResponse]:
         log_text_safely(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
-        error_response = ErrorResponse(status="error", message=WEB_SEARCH_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=WEB_SEARCH_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except OutputParserException as e:
-        error_response = ErrorResponse(status="error", message=WEB_SEARCH_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=WEB_SEARCH_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
@@ -265,12 +265,12 @@ def create_recipe_from_intent_tool(intent: str) -> Union[Recipe, ErrorResponse]:
         log_text_safely(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
-        error_response = ErrorResponse(status="error", message=CREATE_RECIPE_FROM_INTENT_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=CREATE_RECIPE_FROM_INTENT_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except OutputParserException as e:
-        error_response = ErrorResponse(status="error", message=CREATE_RECIPE_FROM_INTENT_GUIDANCE, from_llm=str(e))
+        error_response = ErrorResponse(status="error", message=CREATE_RECIPE_FROM_INTENT_GUIDANCE)
         log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
         log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response

@@ -30,5 +30,4 @@ class SearchResults(BaseModel):
 
 class ErrorResponse(BaseModel):
     status: str
-    from_llm: str
     message: str
