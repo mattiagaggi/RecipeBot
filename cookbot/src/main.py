@@ -10,6 +10,7 @@ import urllib.parse
 import sys
 import time
 import platform
+from urllib.parse import parse_qs
 
 # Enable MLflow autologging for all supported libraries
 try:
@@ -105,19 +106,21 @@ class ChatHandler(BaseHTTPRequestHandler):
                     const form = document.getElementById('chat-form');
                     const input = document.getElementById('user-input');
                     const chatHistory = document.getElementById('chat-history');
-                    let sessionId = localStorage.getItem('cookbot_session_id');
-                    
-                    // Create a new session if none exists
-                    if (!sessionId) {
-                        fetch('/create_session')
-                            .then(response => response.json())
-                            .then(data => {
-                                sessionId = data.session_id;
-                                localStorage.setItem('cookbot_session_id', sessionId);
-                                console.log('Created new session:', sessionId);
-                            });
-                    }
-                    
+                    let sessionId;
+
+                    // Always create a new session when the page loads
+                    fetch('/create_session')
+                        .then(response => response.json())
+                        .then(data => {
+                            sessionId = data.session_id;
+                            localStorage.setItem('cookbot_session_id', sessionId);
+                            console.log('Created new session:', sessionId);
+                        })
+                        .catch(error => {
+                            console.error('Error creating session:', error);
+                            chatHistory.innerHTML += `<p><strong>Error:</strong> Failed to create session</p>`;
+                        });
+
                     form.addEventListener('submit', async (e) => {
                         e.preventDefault();
                         const message = input.value;
@@ -127,18 +130,23 @@ class ChatHandler(BaseHTTPRequestHandler):
                         chatHistory.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
                         input.value = '';
                         
-                        // Call the API
-                        const response = await fetch('/chat', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                            body: `message=${encodeURIComponent(message)}&session_id=${encodeURIComponent(sessionId)}`
-                        });
-                        
-                        if (response.ok) {
-                            const data = await response.json();
-                            chatHistory.innerHTML += `<p><strong>Cooking Assistant:</strong> ${data.response}</p>`;
-                        } else {
-                            chatHistory.innerHTML += `<p><strong>Error:</strong> Failed to get response</p>`;
+                        try {
+                            // Call the API
+                            const response = await fetch('/chat', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                body: `message=${encodeURIComponent(message)}&session_id=${encodeURIComponent(sessionId)}`
+                            });
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                chatHistory.innerHTML += `<p><strong>Cooking Assistant:</strong> ${data.response}</p>`;
+                            } else {
+                                chatHistory.innerHTML += `<p><strong>Error:</strong> Failed to get response</p>`;
+                            }
+                        } catch (error) {
+                            console.error('Error during fetch:', error);
+                            chatHistory.innerHTML += `<p><strong>Error:</strong> Network error or server not responding</p>`;
                         }
                         
                         // Scroll to bottom
@@ -167,7 +175,9 @@ class ChatHandler(BaseHTTPRequestHandler):
         if self.path == '/chat':
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length).decode('utf-8')
-            params = urllib.parse.parse_qs(post_data)
+            
+            # Parse URL-encoded data
+            params = parse_qs(post_data)
             
             user_input = params.get('message', [''])[0]
             session_id = params.get('session_id', [''])[0]
@@ -180,11 +190,10 @@ class ChatHandler(BaseHTTPRequestHandler):
             # Get existing chat history or create new session
             chat_history = self.session_manager.get_session(session_id)
             if chat_history is None:
-                # Invalid session ID, create a new one
                 session_id = self.session_manager.create_session()
                 chat_history = []
             
-            # Process the message
+            # Process the message and capture the LLM response
             inputs = {
                 "messages": chat_history + [("user", user_input)]
             }
@@ -192,20 +201,21 @@ class ChatHandler(BaseHTTPRequestHandler):
             response_content = ""
             for response in self.orchestrator.stream(inputs, stream_mode="values"):
                 message = response["messages"][-1]
-                response_content = message.content
+                response_content = message.content  # Capture the LLM's response
             
-            # Update the session with new chat history
-            self.session_manager.update_session(session_id, response["messages"])
+            # Update the session with new chat history and LLM response
+            self.session_manager.update_session(session_id, response["messages"], response_content)
             
-            # Send response
+            # Construct the response data
+            response_data = {
+                "response": response_content,  # Include the LLM response here
+                "session_id": session_id
+            }
+
+            # Send the response
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            
-            response_data = {
-                "response": response_content,
-                "session_id": session_id
-            }
             self.wfile.write(json.dumps(response_data).encode())
         else:
             self.send_response(404)

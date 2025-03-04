@@ -40,7 +40,7 @@ class SessionManager:
         self._storage[session_id] = []
         self._timestamps[session_id] = datetime.now()
         
-        # Create a new MLflow run for this session if MLflow is available
+        # Ensure MLflow run is created
         if is_mlflow_available():
             try:
                 # End any existing run first
@@ -70,29 +70,35 @@ class SessionManager:
             self._activate_session_run(session_id)
             
             return self._storage.get(session_id)
+        else:
+            print(f"Warning: Session ID {session_id} not found")
         return None
 
-    def update_session(self, session_id: str, chat_history: List[Any]) -> None:
+    def update_session(self, session_id: str, chat_history: List[Any], llm_response: Any) -> None:
         """
         Update a session with new conversation history and refresh its timestamp.
         Triggers cleanup periodically based on configured interval.
         """
-        self._storage[session_id] = chat_history
-        self._timestamps[session_id] = datetime.now()
-        
-        # Ensure the correct MLflow run is active
-        self._activate_session_run(session_id)
-        
-        # Log message count to MLflow
-        if is_mlflow_available() and mlflow.active_run():
-            try:
-                mlflow.log_metric("message_count", len(chat_history))
-                mlflow.log_metric("last_update_timestamp", datetime.now().timestamp())
-            except Exception as e:
-                print(f"Warning: Failed to log metrics for session {session_id}: {e}")
-        
-        if len(self._storage) % self._cleanup_interval == 0:
-            self.cleanup_old_sessions()
+        if session_id in self._storage:
+            chat_history.append(llm_response)
+            self._storage[session_id] = chat_history
+            self._timestamps[session_id] = datetime.now()
+            
+            # Ensure the correct MLflow run is active
+            self._activate_session_run(session_id)
+            
+            # Log message count to MLflow
+            if is_mlflow_available() and mlflow.active_run():
+                try:
+                    mlflow.log_metric("message_count", len(chat_history))
+                    mlflow.log_metric("last_update_timestamp", datetime.now().timestamp())
+                except Exception as e:
+                    print(f"Warning: Failed to log metrics for session {session_id}: {e}")
+            
+            if len(self._storage) % self._cleanup_interval == 0:
+                self.cleanup_old_sessions()
+        else:
+            print(f"Warning: Attempted to update non-existent session {session_id}")
 
     def _activate_session_run(self, session_id: str) -> None:
         """Activate the MLflow run associated with this session."""
