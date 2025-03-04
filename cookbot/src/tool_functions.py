@@ -37,7 +37,7 @@ def adjust_recipe_quantities(recipe: Recipe, quantity_adjustment_input: str) -> 
             (e.g., "double the recipe", "make it for 6 people instead of 4", "half the portions")
 
     Returns:
-        Adjusted quantities for each ingredient
+        Recipe: A new Recipe object with adjusted quantities
     """
     prompt = ChatPromptTemplate.from_template(ADJUST_RECIPE_QUANTITIES_PROMPT)
     structured_llm = ChatModel().model.with_structured_output(ScalingFactor, method="json_mode")
@@ -48,7 +48,17 @@ def adjust_recipe_quantities(recipe: Recipe, quantity_adjustment_input: str) -> 
         "json_schema": ScalingFactor.model_json_schema()
     })
     
-    return [q * scaling_factor.multiplier for q in recipe.quantities]
+    # Create a new Recipe object with adjusted quantities
+    adjusted_quantities = [q * scaling_factor.multiplier for q in recipe.quantities]
+    adjusted_recipe = Recipe(
+        title=recipe.title,
+        ingredients=recipe.ingredients,
+        quantities=adjusted_quantities,
+        units=recipe.units,
+        steps=recipe.steps
+    )
+    
+    return adjusted_recipe
 
 
 def web_search(recipe: Recipe) -> SearchResults:
