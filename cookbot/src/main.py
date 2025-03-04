@@ -1,5 +1,6 @@
 from src.orchestrator import Orchestrator
 from src.mlflow_config import setup_mlflow, test_mlflow_connection, test_mlflow_connection_detailed
+from src.session_manager import SessionManager
 import mlflow
 import os
 import json
@@ -69,7 +70,7 @@ except Exception as e:
 
 class ChatHandler(BaseHTTPRequestHandler):
     orchestrator = Orchestrator()
-    chat_history = []
+    session_manager = SessionManager()
     
     def do_GET(self):
         if self.path == '/':
@@ -104,6 +105,18 @@ class ChatHandler(BaseHTTPRequestHandler):
                     const form = document.getElementById('chat-form');
                     const input = document.getElementById('user-input');
                     const chatHistory = document.getElementById('chat-history');
+                    let sessionId = localStorage.getItem('cookbot_session_id');
+                    
+                    // Create a new session if none exists
+                    if (!sessionId) {
+                        fetch('/create_session')
+                            .then(response => response.json())
+                            .then(data => {
+                                sessionId = data.session_id;
+                                localStorage.setItem('cookbot_session_id', sessionId);
+                                console.log('Created new session:', sessionId);
+                            });
+                    }
                     
                     form.addEventListener('submit', async (e) => {
                         e.preventDefault();
@@ -118,7 +131,7 @@ class ChatHandler(BaseHTTPRequestHandler):
                         const response = await fetch('/chat', {
                             method: 'POST',
                             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                            body: `message=${encodeURIComponent(message)}`
+                            body: `message=${encodeURIComponent(message)}&session_id=${encodeURIComponent(sessionId)}`
                         });
                         
                         if (response.ok) {
@@ -136,6 +149,16 @@ class ChatHandler(BaseHTTPRequestHandler):
             </html>
             '''
             self.wfile.write(html.encode())
+        elif self.path == '/create_session':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            
+            session_id = self.session_manager.create_session()
+            response_data = {
+                "session_id": session_id
+            }
+            self.wfile.write(json.dumps(response_data).encode())
         else:
             self.send_response(404)
             self.end_headers()
@@ -147,14 +170,23 @@ class ChatHandler(BaseHTTPRequestHandler):
             params = urllib.parse.parse_qs(post_data)
             
             user_input = params.get('message', [''])[0]
-            if not user_input:
+            session_id = params.get('session_id', [''])[0]
+            
+            if not user_input or not session_id:
                 self.send_response(400)
                 self.end_headers()
                 return
             
+            # Get existing chat history or create new session
+            chat_history = self.session_manager.get_session(session_id)
+            if chat_history is None:
+                # Invalid session ID, create a new one
+                session_id = self.session_manager.create_session()
+                chat_history = []
+            
             # Process the message
             inputs = {
-                "messages": self.chat_history + [("user", user_input)]
+                "messages": chat_history + [("user", user_input)]
             }
             
             response_content = ""
@@ -162,7 +194,8 @@ class ChatHandler(BaseHTTPRequestHandler):
                 message = response["messages"][-1]
                 response_content = message.content
             
-            self.chat_history = response["messages"]
+            # Update the session with new chat history
+            self.session_manager.update_session(session_id, response["messages"])
             
             # Send response
             self.send_response(200)
@@ -170,7 +203,8 @@ class ChatHandler(BaseHTTPRequestHandler):
             self.end_headers()
             
             response_data = {
-                "response": response_content
+                "response": response_content,
+                "session_id": session_id
             }
             self.wfile.write(json.dumps(response_data).encode())
         else:
