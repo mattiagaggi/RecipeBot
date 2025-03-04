@@ -15,6 +15,10 @@ spec:
       labels:
         app: cookbot
     spec:
+      volumes:
+        - name: mlflow-data
+          persistentVolumeClaim:
+            claimName: mlflow-pvc
       initContainers:
         - name: mlflow-check
           image: curlimages/curl:8.1.2
@@ -58,6 +62,15 @@ spec:
               value: "http://mlflow:5002"
             - name: MLFLOW_ARTIFACT_LOCATION
               value: "file:///mlflow/artifacts"
+            # Reduce startup delay since we have the init container check
+            - name: MLFLOW_STARTUP_DELAY
+              value: "5"
+            # Add debug logging for MLflow
+            - name: MLFLOW_TRACKING_VERBOSE
+              value: "true"
+            # Add experiment name to ensure consistent experiment usage
+            - name: MLFLOW_EXPERIMENT_NAME
+              value: "Default"
             # Optionally silence Git warnings:
             - name: GIT_PYTHON_REFRESH
               value: "quiet"
@@ -94,6 +107,9 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 15
             failureThreshold: 5
+          volumeMounts:
+            - name: mlflow-data
+              mountPath: /mlflow
 
 ---
 ########################################
@@ -178,6 +194,11 @@ spec:
             - "--default-artifact-root"
             - "file:///mlflow/artifacts"
             - "--serve-artifacts"
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: MLFLOW_LOGGING_LEVEL
+              value: "DEBUG"  # Change to DEBUG for more verbose logging
           readinessProbe:
             httpGet:
               path: /

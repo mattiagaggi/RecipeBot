@@ -1,5 +1,5 @@
 from src.orchestrator import Orchestrator
-from src.mlflow_config import setup_mlflow
+from src.mlflow_config import setup_mlflow, test_mlflow_connection, test_mlflow_connection_detailed
 import mlflow
 import os
 import json
@@ -8,14 +8,35 @@ import threading
 import urllib.parse
 import sys
 import time
+import platform
+
+# Enable MLflow autologging for all supported libraries
+try:
+    mlflow.autolog()
+    print("MLflow autologging enabled")
+except Exception as e:
+    print(f"Warning: Failed to enable MLflow autologging: {e}")
 
 # Set up MLflow globally
 try:
+    # Add detailed connection test before setup
+    print("\n=== TESTING MLFLOW CONNECTION BEFORE SETUP ===")
+    test_mlflow_connection()
+    
     # MLflow setup is now handled in the setup_mlflow function
     # with proper environment detection and configurable delays
     run_id = setup_mlflow()
     if run_id:
         print(f"MLflow tracking active with run_id: {run_id}")
+        
+        # Add detailed connection test after setup
+        print("\n=== TESTING MLFLOW CONNECTION AFTER SETUP ===")
+        test_mlflow_connection_detailed()
+        
+        # Log basic system info
+        mlflow.log_param("python_version", platform.python_version())
+        mlflow.log_param("system_platform", platform.platform())
+        mlflow.log_param("app_start_time", time.strftime("%Y-%m-%d %H:%M:%S"))
     else:
         print("MLflow tracking is disabled, but application will continue")
 except Exception as e:
