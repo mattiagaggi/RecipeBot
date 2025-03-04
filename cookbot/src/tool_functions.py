@@ -48,14 +48,15 @@ def adjust_recipe_quantities(recipe: Recipe, quantity_adjustment_input: str) -> 
         "json_schema": ScalingFactor.model_json_schema()
     })
     
+    
     # Create a new Recipe object with adjusted quantities
     adjusted_quantities = [q * scaling_factor.multiplier for q in recipe.quantities]
     adjusted_recipe = Recipe(
-        title=recipe.title,
         ingredients=recipe.ingredients,
         quantities=adjusted_quantities,
         units=recipe.units,
-        steps=recipe.steps
+        steps=recipe.steps,
+        number_of_people=recipe.number_of_people*scaling_factor.multiplier
     )
     
     return adjusted_recipe

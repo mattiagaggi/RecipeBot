@@ -74,13 +74,14 @@ class SessionManager:
             print(f"Warning: Session ID {session_id} not found")
         return None
 
-    def update_session(self, session_id: str, chat_history: List[Any], llm_response: Any) -> None:
+    def update_session(self, session_id: str, chat_history: List[Any], llm_response: Optional[Any] = None) -> None:
         """
         Update a session with new conversation history and refresh its timestamp.
         Triggers cleanup periodically based on configured interval.
         """
         if session_id in self._storage:
-            chat_history.append(llm_response)
+            if llm_response is not None:
+                chat_history.append(llm_response)
             self._storage[session_id] = chat_history
             self._timestamps[session_id] = datetime.now()
             

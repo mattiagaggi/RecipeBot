@@ -11,6 +11,7 @@ import sys
 import time
 import platform
 from urllib.parse import parse_qs
+from src.prompts import SYSTEM_PROMPT
 
 # Enable MLflow autologging for all supported libraries
 try:
@@ -163,6 +164,11 @@ class ChatHandler(BaseHTTPRequestHandler):
             self.end_headers()
             
             session_id = self.session_manager.create_session()
+            
+            # Append the system prompt with the appropriate role
+            system_message = {"role": "system", "content": SYSTEM_PROMPT}
+            self.session_manager.update_session(session_id, [system_message])
+            
             response_data = {
                 "session_id": session_id
             }
