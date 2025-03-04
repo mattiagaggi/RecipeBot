@@ -24,8 +24,20 @@ from src.prompts import (
     SEARCH_RECIPE_PROMPT,
     CREATE_RECIPE_FROM_INTENT_PROMPT
 )
+import threading
+from collections import defaultdict
 
+# Global counters for tracking tool usage across the application
+_tool_metrics = defaultdict(int)
+_tool_metrics_lock = threading.Lock()
 
+def increment_tool_metric(metric_name):
+    """Thread-safe way to increment a tool metric counter"""
+    with _tool_metrics_lock:
+        _tool_metrics[metric_name] += 1
+        # Use safe logging
+        from src.mlflow_config import log_metric_safely
+        log_metric_safely(metric_name, _tool_metrics[metric_name])
 
 @tool
 def adjust_recipe_quantities_tool(recipe: Recipe, adjustment: str) -> Union[Recipe, ErrorResponse]:
@@ -39,7 +51,6 @@ def adjust_recipe_quantities_tool(recipe: Recipe, adjustment: str) -> Union[Reci
     """
     call_id = str(uuid.uuid4())[:8]  # Generate a short unique ID for this tool call
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_id = get_active_run_id()
     tool_name = "adjust_recipe_quantities"
     
     # Prepare input data with prompt included
@@ -50,30 +61,31 @@ def adjust_recipe_quantities_tool(recipe: Recipe, adjustment: str) -> Union[Reci
     }
     
     # Log tool call inputs to MLflow with run_id context
-    mlflow.log_param(f"tool_call_{call_id}", "adjust_recipe_quantities_tool")
-    mlflow.log_text(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
+    from src.mlflow_config import log_param_safely, log_text_safely
+    log_param_safely(f"tool_call_{call_id}", "adjust_recipe_quantities_tool")
+    log_text_safely(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
     
     try:
         result = adjust_recipe_quantities(recipe, adjustment)
-        # Log success result to MLflow
-        mlflow.log_metric(f"tool_success_{call_id}", 1)
+        # Log success using aggregate metric
+        increment_tool_metric(f"{tool_name}_success_count")
         # Log the result as an artifact
         result_json = json.dumps(result.dict(), indent=2)
-        mlflow.log_text(result_json, f"{timestamp}_{tool_name}_output_{call_id}.json")
+        log_text_safely(result_json, f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
         # Log error to MLflow
         error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except OutputParserException as e:
         # Log error to MLflow
         error_response = ErrorResponse(status="error", message=ADJUST_QUANTITIES_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
 
 @tool
@@ -99,28 +111,26 @@ def translate_recipe_tool(recipe: Recipe, language: str) -> Union[TranslationOut
     }
     
     # Log tool call inputs to MLflow
-    mlflow.log_param(f"tool_call_{call_id}", "translate_recipe_tool")
-    mlflow.log_text(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
+    from src.mlflow_config import log_param_safely, log_text_safely
+    log_param_safely(f"tool_call_{call_id}", "translate_recipe_tool")
+    log_text_safely(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
     
     try:
         result = translate_recipe(recipe, language)
-        # Log success result to MLflow
-        mlflow.log_metric(f"tool_success_{call_id}", 1)
-        mlflow.log_text(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_success_count")
+        log_text_safely(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
-        # Log error to MLflow
         error_response = ErrorResponse(status="error", message=TRANSLATE_RECIPE_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}_{language}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}_{language}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}_{language}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}_{language}.json")
         return error_response
     except OutputParserException as e:
-        # Log error to MLflow
         error_response = ErrorResponse(status="error", message=TRANSLATE_RECIPE_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}_{language}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}_{language}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}_{language}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}_{language}.json")
         return error_response
 
 @tool
@@ -146,28 +156,29 @@ def clarify_recipe_step_tool(recipe: Recipe, clarification_request: str) -> Unio
     }
     
     # Log tool call inputs to MLflow
-    mlflow.log_param(f"tool_call_{call_id}", "clarify_recipe_step_tool")
-    mlflow.log_text(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
+    from src.mlflow_config import log_param_safely, log_text_safely
+    log_param_safely(f"tool_call_{call_id}", "clarify_recipe_step_tool")
+    log_text_safely(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
     
     try:
         result = clarify_recipe_step(recipe, clarification_request)
         # Log success result to MLflow
-        mlflow.log_metric(f"tool_success_{call_id}", 1)
-        mlflow.log_text(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_success_count")
+        log_text_safely(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
         # Log error to MLflow
         error_response = ErrorResponse(status="error", message=CLARIFY_RECIPE_STEP_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except OutputParserException as e:
         # Log error to MLflow
         error_response = ErrorResponse(status="error", message=CLARIFY_RECIPE_STEP_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
 
 @tool
@@ -191,31 +202,33 @@ def web_search_tool(recipe: Recipe) -> Union[SearchResults, ErrorResponse]:
     }
     
     # Log tool call inputs to MLflow
-    mlflow.log_param(f"tool_call_{call_id}", "web_search_tool")
-    mlflow.log_text(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
+    from src.mlflow_config import log_param_safely, log_text_safely
+    log_param_safely(f"tool_call_{call_id}", "web_search_tool")
+    log_text_safely(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
     
     try:
         result = web_search(recipe)
         # Log success result to MLflow
-        mlflow.log_metric(f"tool_success_{call_id}", 1)
+        increment_tool_metric(f"{tool_name}_success_count")
         # Use the correct attribute from SearchResults (based on your Pydantic model)
+        from src.mlflow_config import log_metric_safely
         if hasattr(result, 'search_results'):
-            mlflow.log_metric(f"search_results_count_{call_id}", len(result.search_results))
-        mlflow.log_text(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
+            log_metric_safely(f"search_results_count_{call_id}", len(result.search_results))
+        log_text_safely(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
         # Log error to MLflow
         error_response = ErrorResponse(status="error", message=WEB_SEARCH_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except OutputParserException as e:
         # Log error to MLflow
         error_response = ErrorResponse(status="error", message=WEB_SEARCH_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
 
 @tool
@@ -240,26 +253,27 @@ def create_recipe_from_intent_tool(intent: str) -> Union[Recipe, ErrorResponse]:
     }
     
     # Log tool call inputs to MLflow
-    mlflow.log_param(f"tool_call_{call_id}", "create_recipe_from_intent_tool")
-    mlflow.log_text(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
+    from src.mlflow_config import log_param_safely, log_text_safely
+    log_param_safely(f"tool_call_{call_id}", "create_recipe_from_intent_tool")
+    log_text_safely(json.dumps(input_data, indent=2), f"{timestamp}_{tool_name}_input_{call_id}.json")
     
     try:
         result = create_recipe_from_intent(intent)
         # Log success result to MLflow
-        mlflow.log_metric(f"tool_success_{call_id}", 1)
-        mlflow.log_text(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_success_count")
+        log_text_safely(json.dumps(result.dict(), indent=2), f"{timestamp}_{tool_name}_output_{call_id}.json")
         return result
     except ValidationError as e:
         # Log error to MLflow
         error_response = ErrorResponse(status="error", message=CREATE_RECIPE_FROM_INTENT_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response
     except OutputParserException as e:
         # Log error to MLflow
         error_response = ErrorResponse(status="error", message=CREATE_RECIPE_FROM_INTENT_GUIDANCE)
-        mlflow.log_metric(f"tool_error_{call_id}", 1)
-        mlflow.log_text(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
-        mlflow.log_text(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
+        increment_tool_metric(f"{tool_name}_error_count")
+        log_text_safely(str(e), f"{timestamp}_{tool_name}_error_{call_id}.txt")
+        log_text_safely(json.dumps(error_response.dict(), indent=2), f"{timestamp}_{tool_name}_error_response_{call_id}.json")
         return error_response

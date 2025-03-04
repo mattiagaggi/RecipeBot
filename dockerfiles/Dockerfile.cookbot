@@ -1,4 +1,3 @@
-
 # Use Python 3.11 slim image as base
 FROM python:3.11-slim
 # Set working directory
@@ -17,4 +16,9 @@ COPY cookbot/src/ ./src/
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
-# Command to run the application
+# Expose port for web interface
+EXPOSE 9090
+
+
+# Simple reliable command
+CMD ["python", "src/main.py"]
