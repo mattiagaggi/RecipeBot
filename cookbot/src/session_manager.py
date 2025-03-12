@@ -168,4 +168,27 @@ class SessionManager:
     @property
     def active_sessions_count(self) -> int:
         """Return the number of active sessions."""
-        return len(self._storage) 
+        return len(self._storage)
+
+    def delete_session(self, session_id: str) -> None:
+        """Delete a session and its associated data, including ending the MLflow run."""
+        if session_id in self._storage:
+            # End the MLflow run for this session if it exists
+            if session_id in self._mlflow_runs and is_mlflow_available():
+                try:
+                    run_id = self._mlflow_runs[session_id]
+                    # Only end the run if it's the active one
+                    if mlflow.active_run() and mlflow.active_run().info.run_id == run_id:
+                        mlflow.end_run()
+                        print(f"Ended MLflow run {run_id} for session {session_id}")
+                except Exception as e:
+                    print(f"Warning: Failed to end MLflow run for session {session_id}: {e}")
+            
+            # Remove session data
+            del self._storage[session_id]
+            del self._timestamps[session_id]
+            if session_id in self._mlflow_runs:
+                del self._mlflow_runs[session_id]
+            print(f"Session {session_id} deleted")
+        else:
+            print(f"Warning: Attempted to delete non-existent session {session_id}") 

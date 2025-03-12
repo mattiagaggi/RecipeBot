@@ -74,8 +74,8 @@ def web_search(recipe: Recipe) -> SearchResults:
     search = DuckDuckGoSearchRun()
     # TODO: Web Search to Improve
     # Create a search query based on main ingredients and recipe type
-    main_ingredients = ", ".join(recipe.ingredients[:3])  # Use first few ingredients
-    search_query = f"recipe similar to {main_ingredients} {recipe.steps[0]}"
+    main_ingredients = ", ".join(recipe.ingredients)  # Use first few ingredients
+    search_query = f"recipe similar to {main_ingredients}"
     
     # Perform the web search
     search_results = search.run(search_query)

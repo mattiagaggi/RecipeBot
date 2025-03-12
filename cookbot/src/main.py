@@ -101,6 +101,7 @@ class ChatHandler(BaseHTTPRequestHandler):
                 <form id="chat-form">
                     <input type="text" id="user-input" placeholder="Type your message here...">
                     <button type="submit">Send</button>
+                    <button type="button" id="reset-session">Reset Session</button>
                 </form>
                 
                 <script>
@@ -172,6 +173,39 @@ class ChatHandler(BaseHTTPRequestHandler):
             response_data = {
                 "session_id": session_id
             }
+            self.wfile.write(json.dumps(response_data).encode())
+        elif self.path == '/reset_session':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode('utf-8')
+            
+            # Parse URL-encoded data
+            params = parse_qs(post_data)
+            session_id = params.get('session_id', [''])[0]
+            
+            if not session_id:
+                self.send_response(400)
+                self.end_headers()
+                return
+            
+            # Delete the existing session
+            self.session_manager.delete_session(session_id)
+            
+            # Create a new session
+            new_session_id = self.session_manager.create_session()
+            
+            # Append the system prompt with the appropriate role
+            system_message = {"role": "system", "content": SYSTEM_PROMPT}
+            self.session_manager.update_session(new_session_id, [system_message])
+            
+            # Construct the response data
+            response_data = {
+                "session_id": new_session_id
+            }
+
+            # Send the response
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
             self.wfile.write(json.dumps(response_data).encode())
         else:
             self.send_response(404)
