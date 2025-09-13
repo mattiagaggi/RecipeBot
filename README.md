@@ -11,6 +11,18 @@ This should go in the root folder of the project. It will be used by the cookbot
 To run both the `cookbot` and `gptbot` services using Docker Compose, execute the following commands from the root folder:
 
 ### Cookbot (Cooking Assistant)
+
+**What is Cookbot?**
+Cookbot is an intelligent cooking assistant that helps you create, modify, and understand recipes. It uses LangGraph with a ReACT workflow and specialized tools to:
+
+- **Create recipes** from natural language descriptions (e.g., "I want a chocolate cake with rich flavor")
+- **Translate recipes** to different languages while preserving quantities and units
+- **Adjust recipe quantities** for different serving sizes (e.g., "double this recipe" or "make it for 6 people")
+- **Clarify cooking techniques** and explain unclear recipe steps
+- **Search for similar recipes** online using web search capabilities
+
+The system tracks all interactions and experiments using MLflow for monitoring and improvement.
+
 ```bash
 docker compose build cookbot
 docker compose up cookbot -d
@@ -26,6 +38,19 @@ docker compose down
 ```
 
 ### Gptbot (Production Bot)
+
+**What is Gptbot?**
+Gptbot is a production-ready conversational AI bot built with FastAPI and designed for general-purpose interactions. It features:
+
+- **FastAPI REST API** for scalable web service deployment
+- **Session management** with conversation history and context
+- **Interactive chat interface** for direct user interaction
+- **Memory management** with automatic cleanup to prevent unbounded growth
+- **Health checks** and production-grade error handling
+- **Float16 precision** for optimized performance
+
+The bot maintains conversation context across multiple interactions and provides a clean API interface for integration with other applications.
+
 ```bash
 docker compose build gptbot
 docker compose up gptbot -d
