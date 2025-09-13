@@ -10,16 +10,39 @@ This should go in the root folder of the project. It will be used by the cookbot
 
 To run both the `cookbot` and `gptbot` services using Docker Compose, execute the following commands from the root folder:
 
+### Cookbot (Cooking Assistant)
 ```bash
 docker compose build cookbot
-docker compose run cookbot
+docker compose up cookbot -d
 ```
- and 
 
+**Access the web interface at:** `http://localhost:9090`
+
+To stop the cookbot:
+```bash
+docker compose down
+```
+
+### Gptbot (Production Bot)
 ```bash
 docker compose build gptbot
-docker compose run gptbot #might take a while as it checks the API is ready
+docker compose up gptbot -d
 ```
+
+**Access the API at:** `http://localhost:8000`
+
+To stop the gptbot:
+```bash
+docker compose down
+```
+
+### Run Both Services Together
+```bash
+docker compose build
+docker compose up -d
+```
+
+This will start both services with their dependencies (MLflow for cookbot).
 
 
 ## Run with Minikube locally

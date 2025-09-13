@@ -1,8 +1,9 @@
 # Start from a slim Python base
 FROM python:3.11-slim
 
-# Install MLflow (2.20.3) plus Gunicorn
-RUN pip install --no-cache-dir mlflow==2.20.3 gunicorn
+# Install MLflow (2.20.3) plus Gunicorn and curl for health checks
+RUN pip install --no-cache-dir mlflow==2.20.3 gunicorn && \
+    apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Use /mlflow as our working directory
 WORKDIR /mlflow

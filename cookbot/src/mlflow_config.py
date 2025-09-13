@@ -20,10 +20,22 @@ def is_kubernetes_environment() -> bool:
     """Determine if we're running in a Kubernetes environment."""
     return os.environ.get("KUBERNETES_SERVICE_HOST") is not None
 
+def is_docker_environment() -> bool:
+    """Determine if we're running in a Docker environment."""
+    return os.path.exists("/.dockerenv") or os.environ.get("DOCKER_CONTAINER") == "true"
+
 def get_tracking_uri() -> str:
     """Determine the appropriate MLflow tracking URI based on environment."""
     in_kubernetes = is_kubernetes_environment()
-    default_uri = "http://mlflow:5002" if in_kubernetes else "http://localhost:5000"
+    in_docker = is_docker_environment()
+    
+    if in_kubernetes:
+        default_uri = "http://mlflow:5002"
+    elif in_docker:
+        default_uri = "http://mlflow:5002"
+    else:
+        default_uri = "http://localhost:5000"
+    
     return os.environ.get("MLFLOW_TRACKING_URI", default_uri)
 
 def get_artifact_location() -> str:
