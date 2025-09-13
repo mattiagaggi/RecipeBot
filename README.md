@@ -62,7 +62,26 @@ docker compose up gptbot -d
 ```
 
 **Access the API at:** `http://localhost:8000` (gptbot-api service)
-**Interactive chat:** Available in the gptbot container (no direct web access)
+
+**How to Access Gptbot:**
+
+1. **API Access (REST Endpoints):**
+   ```bash
+   # Health check
+   curl http://localhost:8000/health
+   
+   # Send a message (POST request)
+   curl -X POST http://localhost:8000/chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Hello, how are you?", "session_id": null}'
+   ```
+
+2. **Interactive Chat (Command Line):**
+   ```bash
+   # Access the interactive chat interface
+   docker exec -it gptbot_chat python interactive_chat.py
+   ```
+   This will start an interactive chat session where you can type messages directly to the bot.
 
 To stop the gptbot:
 ```bash
