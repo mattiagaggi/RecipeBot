@@ -11,7 +11,7 @@ This should go in the root folder of the project. It will be used by the cookbot
 To run both the `cookbot` and `gptbot` services using Docker Compose, execute the following commands from the root folder:
 
 ### Cookbot (Cooking Assistant)
-B
+
 **What is Cookbot?**
 Cookbot is an intelligent cooking assistant that helps you create, modify, and understand recipes. It uses LangGraph with a ReACT workflow and specialized tools to:
 
