@@ -18,6 +18,8 @@ docker compose up cookbot -d
 
 **Access the web interface at:** `http://localhost:9090`
 
+**Access MLflow UI at:** `http://localhost:5000`
+
 To stop the cookbot:
 ```bash
 docker compose down
@@ -43,6 +45,8 @@ docker compose up -d
 ```
 
 This will start both services with their dependencies (MLflow for cookbot).
+
+**Note:** MLflow runs on port 5000 and tracks all cookbot interactions, experiments, and tool usage. If you encounter MLflow UI dropdown issues, ensure you're using MLflow version 2.8.1 (as configured in the Dockerfile).
 
 
 ## Run with Minikube locally
@@ -105,9 +109,17 @@ I set them up on kubernetes, however this was not particulartly useful as our in
    kubectl get deployments
    ```
 
-   They should show `cookbot`, `gptbot-api`, and `gptbot` as Running.
+   They should show `cookbot`, `gptbot-api`, `gptbot`, and `mlflow` as Running.
 
-7. **Access Application Output**
+7. **Access MLflow UI on Minikube**
+   
+   ```bash
+   minikube service mlflow --url
+   ```
+   
+   This will give you the external URL to access the MLflow UI.
+
+8. **Access Application Output**
 
    - **View Logs**: To see the output of your application, use:
 

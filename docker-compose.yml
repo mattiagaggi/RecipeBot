@@ -26,6 +26,8 @@ services:
       - "9090:9090"
     env_file:
       - .env
+    volumes:
+      - mlflow_data:/mlflow
     depends_on:
       mlflow:
         condition: service_healthy

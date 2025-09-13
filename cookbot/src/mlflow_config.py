@@ -44,7 +44,7 @@ def get_artifact_location() -> str:
         return os.environ.get("MLFLOW_ARTIFACT_LOCATION", "file:/mlflow/artifacts")
     else:
         # Local development uses a directory in the current working directory
-        return os.environ.get("MLFLOW_ARTIFACT_LOCATION", os.path.join(os.getcwd(), "mlflow-artifacts"))
+        return os.environ.get("MLFLOW_ARTIFACT_LOCATION", "file:///mlflow/artifacts")
 
 def ensure_artifact_directory(artifact_location: str) -> bool:
     """Ensure the artifact directory exists for local development."""

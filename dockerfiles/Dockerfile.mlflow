@@ -1,12 +1,12 @@
 # Start from a slim Python base
 FROM python:3.11-slim
 
-# Install MLflow (2.20.3) plus Gunicorn and curl for health checks
-RUN pip install --no-cache-dir mlflow==2.20.3 gunicorn && \
+# Install MLflow (2.8.1) plus Gunicorn and curl for health checks
+RUN pip install --no-cache-dir mlflow==2.8.1 gunicorn && \
     apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Use /mlflow as our working directory
 WORKDIR /mlflow
 
 # By default, run the full MLflow server (with REST API + UI)
-CMD ["mlflow", "server", "--host=0.0.0.0", "--port=5002", "--backend-store-uri", "sqlite:///mlflow.db", "--default-artifact-root", "/mlflow/artifacts"]
+CMD ["mlflow", "server", "--host=0.0.0.0", "--port=5002", "--backend-store-uri", "sqlite:///mlflow.db", "--default-artifact-root", "/mlflow", "--serve-artifacts"]

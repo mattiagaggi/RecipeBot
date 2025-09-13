@@ -165,11 +165,14 @@ spec:
               # Create the default experiment explicitly
               python -c "
               import mlflow
-              from mlflow.store.tracking.file_store import FileStore
-              store = FileStore('/mlflow/store')
-              if not store.get_experiment_by_name('Default'):
-                  store.create_experiment('Default')
-              print('Default experiment initialized')
+              mlflow.set_tracking_uri('file:///mlflow/store')
+              try:
+                  experiment = mlflow.get_experiment_by_name('Default')
+                  if not experiment:
+                      mlflow.create_experiment('Default')
+                  print('Default experiment initialized')
+              except Exception as e:
+                  print(f'Experiment initialization: {e}')
               "
           volumeMounts:
             - name: mlflow-data
